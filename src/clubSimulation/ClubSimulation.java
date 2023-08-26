@@ -111,7 +111,6 @@ public class ClubSimulation {
 			gridX=Integer.parseInt(args[1]); // No. of X grid cells  
 			gridY=Integer.parseInt(args[2]); // No. of Y grid cells  
 			max=Integer.parseInt(args[3]); // max people allowed in club
-			
 		}
 		
 		//hardcoded exit doors
