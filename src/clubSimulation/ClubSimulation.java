@@ -11,22 +11,25 @@ import java.util.Random;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static clubSimulation.Clubgoer.club;
+
 public class ClubSimulation {
-	static int noClubgoers=20;
+	static int noClubgoers=40;
    	static int frameX=400;
 	static int frameY=500;
 	static int yLimit=400;
-	static int gridX=10; //number of x grids in club - default value if not provided on command line
-	static int gridY=10; //number of y grids in club - default value if not provided on command line
-	static int max=5; //max number of customers - default value if not provided on command line
+	static int gridX=15; //number of x grids in club - default value if not provided on command line
+	static int gridY=15; //number of y grids in club - default value if not provided on command line
+	static int max=8; //max number of customers - default value if not provided on command line
 	
 	static Clubgoer[] patrons; // array for customer threads
 	static PeopleLocation [] peopleLocations;  //array to keep track of where customers are
 	
-	static PeopleCounter tallys; //counters for number of people inside and outside club
+	static PeopleCounter tallys ; //counters for number of people inside and outside club
 
-	static ClubView clubView; //threaded panel to display terrain
-	static ClubGrid clubGrid; // club grid
+	static Barman barman;
+	static ClubView clubView ; //threaded panel to display terrain
+	static ClubGrid clubGrid ; // club grid
 	static CounterDisplay counterDisplay ; //threaded display of counters
 	
 	private static int maxWait=1200; //for the slowest customer
@@ -68,7 +71,11 @@ public class ClubSimulation {
 		// add the listener to the jbutton to handle the "pressed" event
 		startB.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e)  {
-			    	  	// THIS DOES NOTHING - MUST BE FIXED  	  
+			    	  	// THIS DOES NOTHING - MUST BE FIXED
+				for (Clubgoer patron : patrons) {
+					patron.simulationStarted = true; // Set simulationStarted to true for all patrons
+				}
+
 		    }
 		   });
 			
@@ -77,7 +84,13 @@ public class ClubSimulation {
 			// add the listener to the jbutton to handle the "pressed" event
 			pauseB.addActionListener(new ActionListener() {
 		      public void actionPerformed(ActionEvent e) {
-		    		// THIS DOES NOTHING - MUST BE FIXED  	
+		    		// THIS DOES NOTHING - MUST BE FIXED
+				  Clubgoer.togglePause();
+
+				  // Signal threads to pause or resume
+				  synchronized (Clubgoer.pauseMonitor) {
+					  Clubgoer.pauseMonitor.notifyAll(); // Notify waiting threads to resume
+				  }
 		      }
 		    });
 			
@@ -117,8 +130,8 @@ public class ClubSimulation {
 		int [] exit = {0,(int) gridY/2-1};  //once-cell wide door on left
 				
 	    tallys = new PeopleCounter(max); //counters for people inside and outside club
-		clubGrid = new ClubGrid(gridX, gridY, exit,tallys); //setup club with size and exitsand maximum limit for people    
-		Clubgoer.club = clubGrid; //grid shared with class
+		clubGrid = new ClubGrid(gridX, gridY, exit,tallys,max); //setup club with size and exitsand maximum limit for people
+		club = clubGrid; //grid shared with class
 	   
 	    peopleLocations = new PeopleLocation[noClubgoers];
 		patrons = new Clubgoer[noClubgoers];
@@ -130,7 +143,9 @@ public class ClubSimulation {
         		int movingSpeed=(int)(Math.random() * (maxWait-minWait)+minWait); //range of speeds for customers
     			patrons[i] = new Clubgoer(i,peopleLocations[i],movingSpeed);
     		}
-		           
+
+		int movingSpeed=(int)(Math.random() * (maxWait-minWait)+minWait);
+		barman = new Barman(-1, new PeopleLocation(-1),movingSpeed);
 		setupGUI(frameX, frameY,exit);  //Start Panel thread - for drawing animation
         //start all the threads
 		Thread t = new Thread(clubView); 
@@ -138,7 +153,8 @@ public class ClubSimulation {
       	//Start counter thread - for updating counters
       	Thread s = new Thread(counterDisplay);  
       	s.start();
-      	
+      	Thread b = new Thread(barman);
+		  b.start();
       	for (int i=0;i<noClubgoers;i++) {
 			patrons[i].start();
 		}

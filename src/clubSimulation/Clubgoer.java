@@ -12,14 +12,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Clubgoer extends Thread {
 	
 	public static ClubGrid club; //shared club
-
+	protected boolean simulationStarted = false;
+	private static boolean paused = false; // Flag to indicate if simulation is paused
+	public static final Object pauseMonitor = new Object(); // Object for synchronization
 	GridBlock currentBlock;
-	private Random rand;
-	private int movingSpeed;
+	private final Random rand;
+	private final int movingSpeed;
 	
 	private PeopleLocation myLocation;
 	private boolean inRoom;
-	private boolean thirsty;
+	protected boolean thirsty;
 	private boolean wantToLeave;
 	
 	private int ID; //thread ID 
@@ -53,18 +55,36 @@ public class Clubgoer extends Thread {
 
 	//check to see if user pressed pause button
 	private void checkPause() {
-		// THIS DOES NOTHING - MUST BE FIXED  	
+		// THIS DOES NOTHING - MUST BE FIXED
+		while (paused) {
+			synchronized (pauseMonitor) {
+				try {
+					pauseMonitor.wait(); // Wait while simulation is paused
+				} catch (InterruptedException e) {
+					// Handle interruption if needed
+				}
+			}
+		}
         
     }
+	public static void togglePause() {
+		paused = !paused;
+	}
 	private void startSim() {
-		// THIS DOES NOTHING - MUST BE FIXED  	
-        
+		// THIS DOES NOTHING - MUST BE FIXED
+		while (!simulationStarted) {
+			try {
+				Thread.sleep(100); // Sleep to avoid busy-waiting
+			} catch (InterruptedException e) {
+				// Handle interruption
+			}
+		}
     }
 	
 	//get drink at bar
 		private void getDrink() throws InterruptedException {
 			//FIX SO BARMAN GIVES THE DRINK AND IT IS NOT AUTOMATIC
-			thirsty=false;
+			Barman.serve(this);
 			System.out.println("Thread "+this.ID + " got drink at bar position: " + currentBlock.getX()  + " " +currentBlock.getY() );
 			sleep(movingSpeed*5);  //wait a bit
 		}
