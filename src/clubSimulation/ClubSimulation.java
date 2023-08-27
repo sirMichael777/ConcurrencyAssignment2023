@@ -153,7 +153,7 @@ public class ClubSimulation {
 		}
 
 		int movingSpeed = (int) (Math.random() * (maxWait - minWait) + minWait);
-		barman = new Barman(-1, new PeopleLocation(-1), movingSpeed);
+		barman = new Barman(-2, new PeopleLocation(-2), movingSpeed);
 
 		// Setup GUI and start threads
 		setupGUI(frameX, frameY, exit);

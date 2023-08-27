@@ -1,0 +1,37 @@
+commit 0ede77b1acce6320262988a421d86ac39c2a6f9b (HEAD -> master)
+Author: Michael Maseko <mskmic017@myuct.ac.za>
+Date:   Sun Aug 27 04:35:40 2023 +0200
+
+    report made  and code modified to respect all stated rules
+
+commit 990332752f3459dbbacec3f000507140d412daab
+:...skipping...
+commit 0ede77b1acce6320262988a421d86ac39c2a6f9b (HEAD -> master)
+Author: Michael Maseko <mskmic017@myuct.ac.za>
+Date:   Sun Aug 26 04:35:40 2023 +0200
+
+    report made  and code modified to respect all stated rules
+
+commit 990332752f3459dbbacec3f000507140d412daab
+Author: Michael Maseko <mskmic017@myuct.ac.za>
+Date:   Sun Aug 25 03:40:12 2023 +0200
+
+    Code commented with minor problems fixed tooo
+
+commit f745b0597d3fe6fe92274797a1060d010b8e8e37
+Author: Michael Maseko <mskmic017@myuct.ac.za>
+Date:   Sun Aug 24 00:25:03 2023 +0200
+
+    Code seems fine, just having a few problems with the counting of patrons
+
+commit 9b601e2b4db1c1b6532e6c1fdfcfe481190a771a
+Author: Michael Maseko <mskmic017@myuct.ac.za>
+Date:   Sat Aug 23 21:00:20 2023 +0200
+
+    Makefile made and working perfectly fine
+
+commit c3d8816971d9fc825abe9b20fc4e56c07ec8938f
+Author: Michael Maseko <mskmic017@myuct.ac.za>
+Date:   Wed Aug 22 20:52:44 2023 +0200
+
+    First commit with nothing changed from the given code
